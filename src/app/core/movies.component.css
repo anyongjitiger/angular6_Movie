@@ -1,0 +1,13 @@
+.movie-list {
+	width: 80%;
+	margin: 0 auto;
+	background-color: #444; 
+}
+.movie-outer{
+	display: flex;
+	align-items: flex-start;
+	flex-wrap: wrap;
+}
+.drop-shadow {
+    filter: drop-shadow(5px 5px 10px black);
+}
