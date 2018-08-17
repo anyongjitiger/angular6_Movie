@@ -2,7 +2,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { ModelModule } from "./model/model.module";
+import { ImgUploadModule } from "./imgUpload/imgUpload.module";
 import { QuillModule } from 'ngx-quill';
+import { ImageUploadModule } from "angular2-image-upload";
 import { CoreModule } from "./core/core.module";
 import { TableComponent } from "./core/table.component";
 import { FormComponent } from "./core/form.component";
@@ -16,7 +18,8 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 @NgModule({
     imports: [BrowserModule, HttpClientModule,CoreModule, QuillModule,
-    		MessageModule, routing, BrowserAnimationsModule],
+    		MessageModule, routing, BrowserAnimationsModule, ImgUploadModule.forRoot(),
+    		ImageUploadModule.forRoot()],
     declarations: [AppComponent],
     providers: [TermsGuard, LoadGuard],
     bootstrap: [AppComponent]

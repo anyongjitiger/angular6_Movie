@@ -1,0 +1,15 @@
+<div class="d-flex">
+	<div class="w-25 p-3">
+		<select [(value)]="selected">
+			<option>None</option>
+			<option value="option1">Option 1</option>
+			<option value="option2">Option 2</option>
+			<option value="option3">Option 3</option>
+		</select>
+	</div>
+	<div class="w-25 p-3">b</div>
+	<div class="w-25 p-3">c</div>
+</div>
+<div class="w-75 p-3">
+	<image-upload (previewClicked)="onPreviewClicked($event)"></image-upload>
+</div>

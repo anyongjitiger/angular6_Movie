@@ -3,9 +3,11 @@ import { TableComponent } from "./core/table.component";
 import { FormComponent } from "./core/form.component";
 import { MoviesComponent } from "./core/movies.component";
 import { MovieAddComponent } from "./core/movieAdd.component";
+import { GameAddComponent } from "./core/gameAdd.component";
 import { NotFoundComponent } from "./core/notFound.component";
 import { ProductCountComponent } from "./core/productCount.component";
 import { CategoryCountComponent } from "./core/categoryCount.component";
+import { ImgUpload } from "./imgUpload/imgUpload.component";
 import { ModelResolver } from "./model/model.resolver";
 import { TermsGuard } from "./terms.guard";
 import { LoadGuard } from "./load.guard";
@@ -54,6 +56,14 @@ const routes: Routes = [
 	{
 		path: "addMovie",
 		component: MovieAddComponent
+	},
+	{
+		path: "addGame",
+		component: GameAddComponent
+	},
+	{
+		path: "uploadImg",
+		component: ImgUpload
 	},
 	{
 		path: "table/:category",

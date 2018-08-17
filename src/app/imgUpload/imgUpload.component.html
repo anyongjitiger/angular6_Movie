@@ -1,0 +1,45 @@
+<!-- <input type="file" (change)="onFileChange(input.file)" #input> -->
+<img style="width:50em; height: :30em;" [src]="originImg" alt="">
+<div style="width: 500px;height: 800px;">
+    <canvas #canvas_1 imgCut [imageSrc]="originImg" (cutComplete)="onCutCompleted($event)" 
+    	class="canvas" width="800" height="500"></canvas>
+    <canvas #canvas_2 class="canvas"></canvas>
+</div>
+
+<div [ngClass]="cssClass" [ngStyle]="style?.layout">
+  <div class="img-ul-file-upload img-ul-hr-inline-group">    
+    <label
+      class="img-ul-upload img-ul-button" 
+      [ngStyle]="style?.selectButton"
+      [ngClass]="{'img-ul-disabled': disabled}">
+      <span [innerText]="buttonCaption"></span>
+      <input
+        type="file"
+        [disabled]="disabled"
+        [accept]="supportedExtensions"
+        (change)="onFileChange(input.files)"
+        #input>
+    </label>
+  </div>
+
+  <p class="img-ul-file-too-large" *ngIf="showFileTooLargeMessage" [innerText]="fileTooLargeMessage"></p>
+
+  <!-- <div *ngIf="preview" class="img-ul-container img-ul-hr-inline-group" [ngStyle]="style?.previewPanel">
+    <div
+      class="img-ul-image"
+      *ngFor="let file of files"
+      (click)="previewFileClicked(file)"
+      [ngStyle]="{'background-image': 'url('+ file.src +')'}"
+    >
+      <div *ngIf="file.pending" class="img-ul-loading-overlay">
+        <div class="img-ul-spinning-circle"></div>
+      </div>
+      <div *ngIf="!file.pending" 
+        [ngClass]="{'img-ul-disabled': disabled}" 
+        class="img-ul-x-mark" 
+        (click)="deleteFile(file)">
+        <span class="img-ul-close"></span>
+      </div>
+    </div>
+  </div> -->
+</div>
