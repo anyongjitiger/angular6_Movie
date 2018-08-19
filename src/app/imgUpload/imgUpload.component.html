@@ -1,8 +1,9 @@
 <!-- <input type="file" (change)="onFileChange(input.file)" #input> -->
-<img style="width:50em; height: :30em;" [src]="originImg" alt="">
-<div style="width: 500px;height: 800px;">
+<img #hide_img style="width:25em" [src]="originImg" alt="">
+<div>
     <canvas #canvas_1 imgCut [imageSrc]="originImg" (cutComplete)="onCutCompleted($event)" 
     	class="canvas" width="800" height="500"></canvas>
+    <!-- <canvas #canvas_1 class="canvas" width="800" height="500"></canvas> -->
     <canvas #canvas_2 class="canvas"></canvas>
 </div>
 

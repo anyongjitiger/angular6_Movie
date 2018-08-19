@@ -1,4 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Headers, Response } from '@angular/http';
 import { UploadMetadata } from './before-upload.interface';
 import { UploadService } from './upload.service';
@@ -16,10 +17,9 @@ export class FileHolder {
   templateUrl: './imgUpload.component.html',
   styleUrls: ['./imgUpload.component.css']
 })
-export class ImgUpload 
-implements OnInit, OnChanges
+export class ImgUpload implements OnInit, OnChanges
 {
-	originImg: string;
+	originImg: SafeUrl;
 	file: FileHolder;
 	showFileTooLargeMessage: boolean = false;
 	@Input() beforeUpload: (param: UploadMetadata) => UploadMetadata | Promise<UploadMetadata> = data => data;
@@ -36,13 +36,15 @@ implements OnInit, OnChanges
 	@Input() withCredentials = false;
 	@Output() uploadStateChanged = new EventEmitter<boolean>();
 	@Output() uploadFinished = new EventEmitter<FileHolder>();
+	@ViewChild('hide_img')
+	private imageObj: ElementRef;
 	@ViewChild('input')
 	private inputElement: ElementRef;
 	@ViewChild('canvas_1')
   	private canvas1: ElementRef;
   	@ViewChild('canvas_2')
   	private canvas2: ElementRef;
-	constructor(private uploadService: UploadService) {
+	constructor(private uploadService: UploadService, private sanitizer:DomSanitizer) {
 		// code...
 	}
 	ngOnInit() {
@@ -53,20 +55,27 @@ implements OnInit, OnChanges
 		this.supportedExtensions = this.supportedExtensions ? this.supportedExtensions.map((ext) => 'image/' + ext) : ['image/*'];
 	}
 	ngOnChanges(changes) {
-	    
-	}
 
+	}
 	onFileChange(files: FileList) {
 	    if (this.disabled) return;
 	    if (this.url) {
 	      this.uploadStateChanged.emit(true);
 	    }
 	    this.showFileTooLargeMessage = false;
+	    // const img = document.createElement('img');
+	    let sfUrl: SafeUrl = this.sanitizer.bypassSecurityTrustUrl(window.URL.createObjectURL(files[0]));
+		// img.src = this.sanitizer.bypassSecurityTrustUrl(window.URL.createObjectURL(files[0]));
+		// img.src = window.URL.createObjectURL(files[0]);
+		this.originImg = sfUrl;
+		const canvas1 = this.canvas1.nativeElement, imgE = this.imageObj.nativeElement;
+		setTimeout(e => {
+			canvas1.getContext("2d").drawImage(this.imageObj.nativeElement,0,0,canvas1.offsetWidth,canvas1.offsetHeight);
+		}, 50);
 	    this.uploadFile(files[0]);
 	}
 
 	private async uploadFile(file: File) {
-		console.log(file);
 		if (this.maxFileSize && file.size > this.maxFileSize) {
 			this.inputElement.nativeElement.value = '';
 			this.showFileTooLargeMessage = true;
@@ -80,18 +89,20 @@ implements OnInit, OnChanges
 			return;
 		}
 
-		const img = document.createElement('img');
+		/*const img = document.createElement('img');
 		img.src = window.URL.createObjectURL(beforeUploadResult.file);
-		console.log(img.src);
 		this.originImg = img.src;
-		/*const reader = new FileReader();
+		let canvas1 = this.canvas1.nativeElement.getContext("2d");
+		canvas1.drawImage(img,0,0);
+		console.log(canvas1);*/
+		const reader = new FileReader();
 		reader.addEventListener('load', (event: any) => {
 			const fileHolder: FileHolder = new FileHolder(event.target.result, beforeUploadResult.file);
 			this.uploadSingleFile(fileHolder, beforeUploadResult.url, beforeUploadResult.formData);
 			this.file = fileHolder;
 			this.originImg = fileHolder.src;
 		}, false);
-		reader.readAsDataURL(beforeUploadResult.file);*/
+		reader.readAsDataURL(beforeUploadResult.file);
 	}
 
 	private uploadSingleFile(fileHolder: FileHolder, url = this.url, customForm?: { [name: string]: any }) {
@@ -116,8 +127,6 @@ implements OnInit, OnChanges
 		this.uploadFinished.emit(fileHolder);
 		this.uploadStateChanged.emit(false);
 	}
-
-
 	onCutCompleted(img: ImageData) {
 		console.log(img);
 	}
