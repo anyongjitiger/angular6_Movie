@@ -1,4 +1,5 @@
 import { Directive, EventEmitter, HostListener, ElementRef, Input, Output } from '@angular/core';
+import { UploadService } from './upload.service';
 
 @Directive({
   selector: '[imgCut]'
@@ -12,10 +13,14 @@ export class ImgCutDirective {
   startX: number;
   startY: number;
   context: CanvasRenderingContext2D;
+  canvas1: any;
   cutData: any;
+  upService: UploadService;
 
-  constructor(elem: ElementRef) {
-      this.context = elem.nativeElement.getContext('2d');
+  constructor(uploadService: UploadService, elem: ElementRef) {
+      this.upService = uploadService;
+      this.canvas1 = elem.nativeElement;
+      this.context = this.canvas1.getContext('2d');
   }
   @HostListener('mousedown', ['$event'])
   onMouseDown(event: any) {
@@ -30,16 +35,30 @@ export class ImgCutDirective {
         let img = new Image(), W, H, eX, eY;
         img.src = this.imageSrc;
         W = img.width,H = img.height, eX = event.offsetX, eY = event.offsetY;
-        // console.log(`w=${W},h=${H},clientX=${eX},clientY=${eY}`);
-        this.context.clearRect(0,0,W,H);
-        // resultImg.clearRect(0,0,cutData.width,cutData.height);
-        this.context.drawImage(img,0,0);
+        // this.context.clearRect(0,0,W,H);
+        this.context.clearRect(0,0,eX,eY);
+        let sizeObj = this.upService.generateSize(this.canvas1.offsetWidth, this.canvas1.offsetHeight, W, H);
+        this.context.drawImage(img,0,0, W, H,
+                              sizeObj.x,sizeObj.y,
+                              sizeObj.width, 
+                              sizeObj.height);
         this.context.fillStyle = 'rgba(255,255,255,0.6)';//设定为半透明的白色
         this.context.fillRect(0, 0, eX, this.startY);//矩形A
         this.context.fillRect(eX, 0, W-eX, eY);//矩形B
         this.context.fillRect(this.startX, eY, W-this.startX, H-eY);//矩形C
         this.context.fillRect(0, this.startY, this.startX, H-this.startY);//矩形D
-        this.cutData = this.context.getImageData(this.startX, this.startY, eX - this.startX, eY - this.startY); //getImageData这个方法不能用跨域的图片
+        if((eX - this.startX)!= 0 && (eY - this.startY)!=0){
+          this.cutData = this.context.getImageData(this.startX, this.startY, eX - this.startX, eY - this.startY);
+          this.context.fillStyle = "Red";
+          this.context.font="10px Arial";
+          let txt=`${this.cutData.width} × ${this.cutData.height}`;
+          let txtWidth = this.context.measureText(txt).width;  //这个方式可以获取到文字所占的像素宽度
+          if(eX > sizeObj.x + sizeObj.width - txtWidth){
+            this.context.fillText(txt, sizeObj.x + sizeObj.width - txtWidth, eY + 30);
+          }else{
+            this.context.fillText(txt, eX, eY);
+          }
+        } //getImageData这个方法不能用跨域的图片
         // resultImg.putImageData(cutData,0,0);
     }
   }

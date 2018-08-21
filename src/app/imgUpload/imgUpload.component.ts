@@ -69,12 +69,18 @@ export class ImgUpload implements OnInit, OnChanges
 		// img.src = window.URL.createObjectURL(files[0]);
 		this.originImg = sfUrl;
 		const canvas1 = this.canvas1.nativeElement, imgE = this.imageObj.nativeElement;
+		canvas1.getContext("2d").clearRect(0,0,canvas1.offsetWidth,canvas1.offsetHeight);
 		setTimeout(e => {
-			canvas1.getContext("2d").drawImage(this.imageObj.nativeElement,0,0,canvas1.offsetWidth,canvas1.offsetHeight);
-		}, 50);
+			let sizeObj = this.uploadService.generateSize(canvas1.offsetWidth, canvas1.offsetHeight, imgE.naturalWidth, imgE.naturalHeight);
+			canvas1.getContext("2d").drawImage(this.imageObj.nativeElement,0,0,
+															imgE.naturalWidth, 
+															imgE.naturalHeight,
+															sizeObj.x,sizeObj.y,
+															sizeObj.width, 
+															sizeObj.height);
+		}, 150);
 	    this.uploadFile(files[0]);
 	}
-
 	private async uploadFile(file: File) {
 		if (this.maxFileSize && file.size > this.maxFileSize) {
 			this.inputElement.nativeElement.value = '';
@@ -128,6 +134,8 @@ export class ImgUpload implements OnInit, OnChanges
 		this.uploadStateChanged.emit(false);
 	}
 	onCutCompleted(img: ImageData) {
-		console.log(img);
+		const cv2 = this.canvas2.nativeElement;
+		cv2.getContext("2d").clearRect(0,0,cv2.offsetWidth,cv2.offsetHeight);
+		cv2.getContext("2d").putImageData(img,0,0);
 	}
 }
