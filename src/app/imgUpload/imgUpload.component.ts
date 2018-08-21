@@ -94,13 +94,6 @@ export class ImgUpload implements OnInit, OnChanges
 			this.inputElement.nativeElement.value = '';
 			return;
 		}
-
-		/*const img = document.createElement('img');
-		img.src = window.URL.createObjectURL(beforeUploadResult.file);
-		this.originImg = img.src;
-		let canvas1 = this.canvas1.nativeElement.getContext("2d");
-		canvas1.drawImage(img,0,0);
-		console.log(canvas1);*/
 		const reader = new FileReader();
 		reader.addEventListener('load', (event: any) => {
 			const fileHolder: FileHolder = new FileHolder(event.target.result, beforeUploadResult.file);
