@@ -57,30 +57,28 @@ export class ImgUpload implements OnInit, OnChanges
 	ngOnChanges(changes) {
 
 	}
+	setCanvasData(event) {
+		const canvas1 = this.canvas1.nativeElement, imgE = this.imageObj.nativeElement;
+		canvas1.getContext("2d").clearRect(0,0,canvas1.offsetWidth,canvas1.offsetHeight);
+		let sizeObj = this.uploadService.generateSize(canvas1.offsetWidth, canvas1.offsetHeight, imgE.naturalWidth, imgE.naturalHeight);
+				canvas1.getContext("2d").drawImage(this.imageObj.nativeElement,0,0,
+															imgE.naturalWidth, 
+															imgE.naturalHeight,
+															sizeObj.x,sizeObj.y,
+															sizeObj.width, 
+															sizeObj.height);
+	}
 	onFileChange(files: FileList) {
 	    if (this.disabled) return;
 	    if (this.url) {
 	      this.uploadStateChanged.emit(true);
 	    }
 	    this.showFileTooLargeMessage = false;
-	    // const img = document.createElement('img');
-	    let sfUrl: SafeUrl = this.sanitizer.bypassSecurityTrustUrl(window.URL.createObjectURL(files[0]));
-		// img.src = this.sanitizer.bypassSecurityTrustUrl(window.URL.createObjectURL(files[0]));
-		// img.src = window.URL.createObjectURL(files[0]);
+		let sfUrl: SafeUrl = this.sanitizer.bypassSecurityTrustUrl(window.URL.createObjectURL(files[0]));
 		this.originImg = sfUrl;
-		const canvas1 = this.canvas1.nativeElement, imgE = this.imageObj.nativeElement;
-		canvas1.getContext("2d").clearRect(0,0,canvas1.offsetWidth,canvas1.offsetHeight);
-		setTimeout(e => {
-			let sizeObj = this.uploadService.generateSize(canvas1.offsetWidth, canvas1.offsetHeight, imgE.naturalWidth, imgE.naturalHeight);
-			canvas1.getContext("2d").drawImage(this.imageObj.nativeElement,0,0,
-															imgE.naturalWidth, 
-															imgE.naturalHeight,
-															sizeObj.x,sizeObj.y,
-															sizeObj.width, 
-															sizeObj.height);
-		}, 150);
 	    this.uploadFile(files[0]);
 	}
+
 	private async uploadFile(file: File) {
 		if (this.maxFileSize && file.size > this.maxFileSize) {
 			this.inputElement.nativeElement.value = '';
@@ -128,7 +126,10 @@ export class ImgUpload implements OnInit, OnChanges
 	}
 	onCutCompleted(img: ImageData) {
 		const cv2 = this.canvas2.nativeElement;
-		cv2.getContext("2d").clearRect(0,0,cv2.offsetWidth,cv2.offsetHeight);
-		cv2.getContext("2d").putImageData(img,0,0);
+		if(img || false){
+			cv2.getContext("2d").clearRect(0,0,cv2.offsetWidth,cv2.offsetHeight);
+			let sizeObj = this.uploadService.generateSize(cv2.offsetWidth, cv2.offsetHeight, img.width, img.height);
+			cv2.getContext("2d").putImageData(img,Math.floor((350-img.width)/2),Math.floor((350-img.height)/2));
+		}
 	}
 }

@@ -8,6 +8,7 @@ export class MessageErrorHandler implements ErrorHandler{
 
 	}
 	handleError(error){
+		console.error(error);
 		let msg = error instanceof Error ? error.message : error.toString();
 		setTimeout(() => this.messageService.reportMessage(new Message(msg, true)),0); 
 	}

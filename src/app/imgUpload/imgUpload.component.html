@@ -1,5 +1,5 @@
 <!-- <input type="file" (change)="onFileChange(input.file)" #input> -->
-<img #hide_img style="width:25em" [src]="originImg" alt="">
+<img #hide_img style="width:25em" [src]="originImg" alt="" (load)="setCanvasData($event)">
 <div>
     <canvas #canvas_1 imgCut [imageSrc]="originImg" (cutComplete)="onCutCompleted($event)" 
     	class="canvas" width="800" height="500"></canvas>
