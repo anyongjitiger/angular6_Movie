@@ -6,6 +6,7 @@ import { UploadService } from './upload.service';
 })
 export class ImgCutDirective {
   @Input() imageSrc: string;
+  @Input() cutImage: boolean = false;
   @Output() fileOver: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Output() cutComplete: EventEmitter<ImageData> = new EventEmitter<ImageData>();
 
@@ -15,7 +16,7 @@ export class ImgCutDirective {
   context: CanvasRenderingContext2D;
   canvas1: any;
   cutData: any;
-  outSize: boolean = false;
+  outSize: boolean = false; //判断截图的尺寸是否超出限定大小
   upService: UploadService;
 
   constructor(uploadService: UploadService, elem: ElementRef) {
@@ -32,7 +33,7 @@ export class ImgCutDirective {
 
   @HostListener('mousemove', ['$event'])
   onMouseMove(event: any){
-    if(this.flag){
+    if(this.flag && this.cutImage){
         let img = new Image(), W, H, eX, eY;
         img.src = this.imageSrc;
         W = img.width,H = img.height, eX = event.offsetX, eY = event.offsetY;
@@ -75,7 +76,7 @@ export class ImgCutDirective {
   @HostListener('mouseup', ['$event'])
   onMouseUp(event: any){
     this.flag = false;
-    if(!this.outSize){
+    if(!this.outSize && this.cutImage){
       this.cutComplete.emit(this.cutData);
     }
   }

@@ -1,10 +1,10 @@
 <!-- <input type="file" (change)="onFileChange(input.file)" #input> -->
 <img #hide_img style="width:25em" [src]="originImg" alt="" (load)="setCanvasData($event)">
 <div>
-    <canvas #canvas_1 imgCut [imageSrc]="originImg" (cutComplete)="onCutCompleted($event)" 
-    	class="canvas" width="800" height="500"></canvas>
+    <canvas #canvas_1 imgCut [imageSrc]="originImg" (cutComplete)="onCutCompleted($event)" [cutImage]="cutImage"
+    	class="canvas" width="800" height="500" [hidden]="(!cutImage) || (!originImg)"></canvas>
     <!-- <canvas #canvas_1 class="canvas" width="800" height="500"></canvas> -->
-    <canvas #canvas_2 class="canvas" width="350" height="350"></canvas>
+    <canvas #canvas_2 class="canvas" width="350" height="350" [hidden]="(!cutImage) || (!cutCompleted)"></canvas>
 </div>
 
 <div [ngClass]="cssClass" [ngStyle]="style?.layout">

@@ -1,15 +1,19 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, InjectionToken } from '@angular/core';
 import { Headers, Http, RequestOptions, RequestOptionsArgs, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
+export const REST_URL = new InjectionToken("remote_rest_url");
+
 @Injectable()
 export class UploadService {
-  constructor(private http: Http) {
+  constructor(@Inject(REST_URL) private url: string, private http: Http) {
   }
 
-  public postImage(url: string, image: File, headers?: Headers | { [name: string]: any }, partName: string = 'image', customFormData?: { [name: string]: any }, withCredentials?: boolean): Observable<Response> {
+  public postImage(url: string, image: File, headers?: Headers | { [name: string]: any }, partName: string = 'file', customFormData?: { [name: string]: any }, withCredentials?: boolean): Observable<Response> {
     if (!url || url === '') {
       throw new Error('Url is not set! Please set it before doing queries');
+    }else if(url === "default"){
+      url = `${this.url}/api/v1/upload`;
     }
 
     const options: RequestOptionsArgs = new RequestOptions();
@@ -31,6 +35,28 @@ export class UploadService {
     formData.append(partName, image);
     return this.http.post(url, formData, options);
   }
+
+/*public postImage2(url: string, image: File, headers?: Headers | { [name: string]: any }, partName: string = 'file', customFormData?: { [name: string]: any }, withCredentials?: boolean): Observable<HttpEvent<any>> {
+    if (!url || url === '') {
+      throw new Error('Url is not set! Please set it before doing queries');
+    }
+    const options: RequestOptionsArgs = new RequestOptions();
+    if (withCredentials) {
+      options.withCredentials = withCredentials;
+    }
+    if (headers) {
+      options.headers = new Headers(headers);
+    }
+    // add custom form data
+    let formData = new FormData();
+    for (let key in customFormData) {
+      formData.append(key, customFormData[key]);
+    }
+    formData.append(partName, image);
+    return this.dataSource.upload(url, formData, options);
+  }*/
+
+
   public generateSize(cvsWidth : number, 
             cvsHeight: number,
             imgWidth : number, 

@@ -15,13 +15,17 @@ import { AppComponent } from "./app.component";
 import { TermsGuard } from "./terms.guard";
 import { LoadGuard } from "./load.guard";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { MATERIAL_SANITY_CHECKS } from '@angular/material';
 
 @NgModule({
     imports: [BrowserModule, HttpClientModule,CoreModule, QuillModule,
     		MessageModule, routing, BrowserAnimationsModule, ImgUploadModule.forRoot(),
     		ImageUploadModule.forRoot()],
     declarations: [AppComponent],
-    providers: [TermsGuard, LoadGuard],
+    providers: [TermsGuard, LoadGuard,{
+            provide: MATERIAL_SANITY_CHECKS,
+            useValue: false
+        }],
     bootstrap: [AppComponent]
 })
 export class AppModule { }

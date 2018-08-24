@@ -3,7 +3,7 @@ import { ModuleWithProviders, ErrorHandler, NgModule } from '@angular/core';
 import { HttpModule } from '@angular/http';
 import { ImgUpload } from "./imgUpload.component";
 import { ImgCutDirective } from "./imgCut.directive";
-import { UploadService } from "./upload.service";
+import { UploadService, REST_URL } from "./upload.service";
 
 @NgModule({
     imports: [CommonModule, HttpModule],
@@ -14,7 +14,7 @@ export class ImgUploadModule {
 	static forRoot(): ModuleWithProviders {
 	    return {
 	      ngModule: ImgUploadModule,
-	      providers: [UploadService]
+	      providers: [UploadService,{provide:REST_URL, useValue: `http://${location.hostname}:8080`}]
 	    }
 	}
 }

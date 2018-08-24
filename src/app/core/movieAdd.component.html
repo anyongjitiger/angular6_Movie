@@ -2,5 +2,5 @@
     <input type="file" class="file-input" required />
     <button type="submit" class="primary submit-btn">Submit</button>
 </form> -->
-<input type="file" (change)="fileChange($event)" placeholder="Upload file" name="file" accept=".pdf,.doc,.docx,.jpg,.gif">
-<img-upload></img-upload>
+<!-- <input type="file" (change)="fileChange($event)" placeholder="Upload file" name="file" accept=".pdf,.doc,.docx,.jpg,.gif"> -->
+<img-upload [cutImage]="false" [url]="'default'" [headers]="{'lastModifier': 'anyj','author': 'anyj'}"></img-upload> <!--字符串要放到单引号内-->

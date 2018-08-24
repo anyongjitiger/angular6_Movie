@@ -33,14 +33,10 @@ export class RestDataSource{
   		return this.httpc.post<CommonResponse | ErrorResponse>(`${this.remote_url}/api/v1/movie`, movie);
   	}
   	upload(data: FormData): Observable<HttpEvent<any>> {
-  		console.log(data);
-  		let header = new HttpHeaders();
-        header.append('Content-Type', 'multipart/form-data');
-        header.append('Accept', 'application/json');
-        /*let initParams: Map<any, any> = new Map();
-        initParams.set(headers,headers);*/
-
-        console.log("uploading-----------------------------");
+  		let header = new HttpHeaders({
+  			// 'Content-Type':'multipart/form-data', //如果请求发送FormData,这一行header会自动指定，不需要自己添加，因为自己添加缺少boundary string 
+  			'Accept':'application/json'
+  		});
         return this.httpc.request(new HttpRequest('POST',`${this.remote_url}/api/v1/upload`,data,{headers: header})).catch(
 				(error: Response) => Observable.throw(`Network Error: ${error.statusText} (${error.status})`)
 			);
