@@ -6,28 +6,22 @@ import { UploadService } from './upload.service';
 import { Style } from './style';
 
 export class FileHolder {
-  public pending: boolean = false;
-  public serverResponse: { status: number, response: any };
-  constructor(public src: string, public file: File) {
-  }
+	public pending = false;
+	public serverResponse: { status: number, response: any };
+	constructor(public src: string, public file: File) {}
 }
 
 @Component({
-  selector: 'img-upload',
-  templateUrl: './imgUpload.component.html',
-  styleUrls: ['./imgUpload.component.css']
+	selector: 'img-upload',
+	templateUrl: './imgUpload.component.html',
+	styleUrls: ['./imgUpload.component.css']
 })
-export class ImgUpload implements OnInit, OnChanges
-{
-	originImg: SafeUrl;
-	file: FileHolder;
-	showFileTooLargeMessage: boolean = false;
-	cutCompleted: boolean = false; //截图完成
+export class ImgUploadComponent implements OnInit, OnChanges {
 	@Input() beforeUpload: (param: UploadMetadata) => UploadMetadata | Promise<UploadMetadata> = data => data;
 	@Input() disabled = false;
-	@Input() cutImage: boolean = false; //是否需要开启截图功能
+	@Input() cutImage = false; // 是否需要开启截图功能
 	@Input() buttonCaption = 'Select Images';
-	@Input() maxFileSize: number = 4096*1024;
+	@Input() maxFileSize: number = 4096 * 1024;
 	@Input() fileTooLargeMessage;
 	@Input('extensions') supportedExtensions: string[];
 	@Input('innerStyle') style: Style;
@@ -43,45 +37,50 @@ export class ImgUpload implements OnInit, OnChanges
 	@ViewChild('input')
 	private inputElement: ElementRef;
 	@ViewChild('canvas_1')
-  	private canvas1: ElementRef;
-  	@ViewChild('canvas_2')
-  	private canvas2: ElementRef;
-	constructor(private uploadService: UploadService, private sanitizer:DomSanitizer) {
+	private canvas1: ElementRef;
+	@ViewChild('canvas_2')
+	private canvas2: ElementRef;
+	originImg: SafeUrl;
+	file: FileHolder;
+	showFileTooLargeMessage = false;
+	cutCompleted = false; // 截图完成
+	constructor(private uploadService: UploadService, private sanitizer: DomSanitizer) {
 		// code...
 	}
 	ngOnInit() {
-		this.originImg = "";
-	    if (!this.fileTooLargeMessage) {
-      		this.fileTooLargeMessage = 'The image was too large and was not uploaded.' + (this.maxFileSize ? (' The maximum file size is ' + this.maxFileSize / 1024) + 'MB.' : '');
-	    }
+		this.originImg = '';
+		if (!this.fileTooLargeMessage) {
+			this.fileTooLargeMessage = 'The image was too large and was not uploaded.'
+			+ (this.maxFileSize ? (' The maximum file size is ' + this.maxFileSize / 1024) + 'MB.' : '');
+		}
 		this.supportedExtensions = this.supportedExtensions ? this.supportedExtensions.map((ext) => 'image/' + ext) : ['image/*'];
 	}
 	ngOnChanges(changes) {
 
 	}
 	setCanvasData(event) {
-		if(!this.cutImage) return;
+		if (!this.cutImage) { return; }
 		const canvas1 = this.canvas1.nativeElement, imgE = this.imageObj.nativeElement;
-		canvas1.getContext("2d").clearRect(0,0,canvas1.offsetWidth,canvas1.offsetHeight);
-		let sizeObj = this.uploadService.generateSize(canvas1.offsetWidth, canvas1.offsetHeight, imgE.naturalWidth, imgE.naturalHeight);
-		canvas1.getContext("2d").drawImage(this.imageObj.nativeElement,0,0,
-													imgE.naturalWidth, 
+		canvas1.getContext('2d').clearRect(0, 0, canvas1.offsetWidth, canvas1.offsetHeight);
+		const sizeObj = this.uploadService.generateSize(canvas1.offsetWidth, canvas1.offsetHeight, imgE.naturalWidth, imgE.naturalHeight);
+		canvas1.getContext('2d').drawImage(this.imageObj.nativeElement, 0, 0,
+													imgE.naturalWidth,
 													imgE.naturalHeight,
-													sizeObj.x,sizeObj.y,
-													sizeObj.width, 
+													sizeObj.x, sizeObj.y,
+													sizeObj.width,
 													sizeObj.height);
 	}
 	onFileChange(files: FileList) {
-	    if (this.disabled) return;
-	    if (this.url) {
-	      this.uploadStateChanged.emit(true);
-	    }
-	    this.showFileTooLargeMessage = false;
-		let sfUrl: SafeUrl = this.sanitizer.bypassSecurityTrustUrl(window.URL.createObjectURL(files[0]));
+		if (this.disabled) { return; }
+		if (this.url) {
+			this.uploadStateChanged.emit(true);
+		}
+		this.showFileTooLargeMessage = false;
+		const sfUrl: SafeUrl = this.sanitizer.bypassSecurityTrustUrl(window.URL.createObjectURL(files[0]));
 		this.originImg = sfUrl;
 		this.clearCanvas(this.canvas2);
 		this.cutCompleted = false;
-	    this.uploadFile(files[0]);
+		this.uploadFile(files[0]);
 	}
 
 	private async uploadFile(file: File) {
@@ -109,17 +108,17 @@ export class ImgUpload implements OnInit, OnChanges
 
 	private uploadSingleFile(fileHolder: FileHolder, url = this.url, customForm?: { [name: string]: any }) {
 		if (url) {
-		  fileHolder.pending = true;
-		  this.uploadService
-		    .postImage(url, fileHolder.file, this.headers, this.partName, customForm, this.withCredentials)
-		    .subscribe(
-		      response => this.onResponse(response, fileHolder),
-		      error => {
-		        this.onResponse(error, fileHolder);
-		        this.inputElement.nativeElement.value = '';
-		      });
+			fileHolder.pending = true;
+			this.uploadService
+			.postImage(url, fileHolder.file, this.headers, this.partName, customForm, this.withCredentials)
+			.subscribe(
+				response => this.onResponse(response, fileHolder),
+				error => {
+					this.onResponse(error, fileHolder);
+					this.inputElement.nativeElement.value = '';
+				});
 		} else {
-		  this.uploadFinished.emit(fileHolder);
+			this.uploadFinished.emit(fileHolder);
 		}
 	}
 
@@ -129,17 +128,17 @@ export class ImgUpload implements OnInit, OnChanges
 		this.uploadFinished.emit(fileHolder);
 		this.uploadStateChanged.emit(false);
 	}
-	private clearCanvas(canvas: ElementRef){
-		canvas.nativeElement.getContext("2d").clearRect(0, 0, canvas.nativeElement.offsetWidth, canvas.nativeElement.offsetHeight);
+	private clearCanvas(canvas: ElementRef) {
+		canvas.nativeElement.getContext('2d').clearRect(0, 0, canvas.nativeElement.offsetWidth, canvas.nativeElement.offsetHeight);
 	}
 
 	onCutCompleted(img: ImageData) {
 		const cv2 = this.canvas2.nativeElement;
-		if(img || false){
+		if (img || false) {
 			this.clearCanvas(this.canvas2);
 			this.cutCompleted = true;
-			let sizeObj = this.uploadService.generateSize(cv2.offsetWidth, cv2.offsetHeight, img.width, img.height);
-			cv2.getContext("2d").putImageData(img,Math.floor((350-img.width)/2),Math.floor((350-img.height)/2));
+			const sizeObj = this.uploadService.generateSize(cv2.offsetWidth, cv2.offsetHeight, img.width, img.height);
+			cv2.getContext('2d').putImageData(img, Math.floor((350 - img.width) / 2), Math.floor((350 - img.height) / 2));
 		}
 	}
 }
