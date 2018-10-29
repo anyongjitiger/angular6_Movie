@@ -17,7 +17,10 @@ export class FileHolder {
 	styleUrls: ['./imgUpload.component.css']
 })
 export class ImgUploadComponent implements OnInit, OnChanges {
-	@Input() beforeUpload: (param: UploadMetadata) => UploadMetadata | Promise<UploadMetadata> = data => data;
+	originImg: SafeUrl;
+	file: FileHolder;
+	showFileTooLargeMessage = false;
+	cutCompleted = false; // 截图完成
 	@Input() disabled = false;
 	@Input() cutImage = false; // 是否需要开启截图功能
 	@Input() buttonCaption = 'Select Images';
@@ -40,10 +43,7 @@ export class ImgUploadComponent implements OnInit, OnChanges {
 	private canvas1: ElementRef;
 	@ViewChild('canvas_2')
 	private canvas2: ElementRef;
-	originImg: SafeUrl;
-	file: FileHolder;
-	showFileTooLargeMessage = false;
-	cutCompleted = false; // 截图完成
+	@Input() beforeUpload: (param: UploadMetadata) => UploadMetadata | Promise<UploadMetadata> = data => data;
 	constructor(private uploadService: UploadService, private sanitizer: DomSanitizer) {
 		// code...
 	}
